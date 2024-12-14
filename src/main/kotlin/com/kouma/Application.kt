@@ -1,7 +1,7 @@
 package com.kouma
 
 import com.kouma.routing.configureRouting
-import com.kouma.routing.configureRoutingListTokens
+import com.kouma.routing.configureRoutingList
 import com.kouma.routing.configureRoutingLogin
 import com.kouma.routing.configureRoutingRegister
 import com.kouma.serialization.configureSerialization
@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     configureSerialization()
     configureRouting()
-    configureRoutingListTokens()
+    configureRoutingList()
     configureRoutingLogin()
     configureRoutingRegister()
 }
