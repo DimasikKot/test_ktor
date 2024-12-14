@@ -1,6 +1,5 @@
 package com.kouma.database
 
-import com.kouma.cache.TokenCache
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
