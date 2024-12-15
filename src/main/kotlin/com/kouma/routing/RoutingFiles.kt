@@ -9,67 +9,38 @@ import java.io.File
 
 fun Application.configureRoutingFiles() {
     routing {
-        route("/files") {
-            get("/") {
-                call.respondText("В будущем будет возможность увидеть список files/")
+        get("/{disk}/") {
+            val disk = call.parameters["disk"].toString()
+            val file = File("$disk://")
+            if (file.isDirectory) {
+                call.respond(fetchDir(file))
             }
-            get("/{dir}/d") {
-                val dir = call.parameters["dir"].toString()
-                val file = File("files/$dir")
-                call.response.header(
-                    HttpHeaders.ContentDisposition,
-                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, dir)
-                        .toString()
-                )
-                call.respondFile(file)
-            }
-            get("/{dir}") {
-                val dir = call.parameters["dir"].toString()
-                val file = File("files/$dir")
-                call.respondFile(file)
-            }
+            call.respondText("Такого диска нет или это файл?")
         }
-        route("/T") {
-            get("/") {
-                val dir = File("T://")
-                if (dir.isDirectory) {
-                    call.respond(fetchDir(dir))
-                }
-                call.respondText("В будущем будет возможность увидеть список T://")
+        get("/{disk}/{path}/") {
+            val disk = call.parameters["disk"].toString()
+            val path =
+                "$disk://" + call.parameters["path"].toString().replace(":", "/").replace(">", "/").replace("*", "/")
+            val file = File(path)
+            if (file.isDirectory) {
+                call.respond(fetchDir(file))
             }
-            get("/{dir}/d") {
-                val dir = call.parameters["dir"].toString()
-                val filePath = "T://" + dir.replace(":", "/").replace(">", "/").replace("*", "/")
-                try {
-                    val file = File(filePath)
-                    if (file.isDirectory) {
-                        call.respond(fetchDir(file))
-                    }
-                    call.response.header(
-                        HttpHeaders.ContentDisposition,
-                        ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, file.name)
-                            .toString()
-                    )
-                    call.respondFile(file)
-                } catch (e: Exception) {
-                    println("[ERROR] $e")
-                    call.respondText("[ERROR] $filePath")
-                }
+            call.respondFile(file)
+        }
+        get("/{disk}/{path}/d") {
+            val disk = call.parameters["disk"].toString()
+            val path =
+                "$disk://" + call.parameters["path"].toString().replace(":", "/").replace(">", "/").replace("*", "/")
+            val file = File(path)
+            if (file.isDirectory) {
+                call.respond(fetchDir(file))
             }
-            get("/{dir}") {
-                val dir = call.parameters["dir"].toString()
-                val filePath = "T://" + dir.replace(":", "/").replace(">", "/").replace("*", "/")
-                try {
-                    val file = File(filePath)
-                    if (file.isDirectory) {
-                        call.respond(fetchDir(file))
-                    }
-                    call.respondFile(file)
-                } catch (e: Exception) {
-                    println("[ERROR] $e")
-                    call.respondText("[ERROR] $filePath")
-                }
-            }
+            call.response.header(
+                HttpHeaders.ContentDisposition,
+                ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, file.name)
+                    .toString()
+            )
+            call.respondFile(file)
         }
     }
 }
@@ -80,7 +51,8 @@ fun fetchDir(dir: File): List<CatalogItem> {
         result.add(
             CatalogItem(
                 isDir = item.isDirectory,
-                name = item.name
+                name = item.name,
+                extension = if (!item.isDirectory) item.extension else null
             )
         )
     }
@@ -90,5 +62,6 @@ fun fetchDir(dir: File): List<CatalogItem> {
 @Serializable
 data class CatalogItem(
     val isDir: Boolean,
-    val name: String
+    val name: String,
+    val extension: String?
 )

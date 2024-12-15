@@ -22,4 +22,5 @@ fun Application.module() {
     configureRoutingLogin()
     configureRoutingRegister()
     configureRoutingFiles()
+    configureRoutingLocal()
 }
