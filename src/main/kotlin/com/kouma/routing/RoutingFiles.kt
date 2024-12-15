@@ -21,6 +21,7 @@ fun Application.configureRoutingFiles() {
                 call.respondFile(File("files/0001.png"))
             }
         }
+
 //        get("/files/{uuid}") {
 //            val file = File("files/uuid")
 //
