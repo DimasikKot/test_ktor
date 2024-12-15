@@ -1,5 +1,6 @@
 package com.kouma.routing
 
+import com.kouma.serialization.fetchDir
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -8,28 +9,35 @@ import java.io.File
 
 fun Application.configureRoutingLocal() {
     routing {
-        route("/local") {
-            get("/") {
-                val file = File("files/")
-                if (file.isDirectory) {
-                    call.respond(fetchDir(file))
-                }
+        get("/local/") {
+            val file = File("files/")
+            if (file.isDirectory) {
+                call.respond(fetchDir(file))
             }
-            get("/{dir}/d") {
-                val dir = call.parameters["dir"].toString()
-                val file = File("files/$dir")
-                call.response.header(
-                    HttpHeaders.ContentDisposition,
-                    ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, dir)
-                        .toString()
-                )
-                call.respondFile(file)
+            call.respondText("Такого диска нет или это файл?")
+        }
+        get("/local/{path}") {
+            val path =
+                "files/" + call.parameters["path"].toString().replace(":", "/").replace(">", "/").replace("*", "/")
+            val file = File(path)
+            if (file.isDirectory) {
+                call.respond(fetchDir(file))
             }
-            get("/{dir}") {
-                val dir = call.parameters["dir"].toString()
-                val file = File("files/$dir")
-                call.respondFile(file)
+            call.respondFile(file)
+        }
+        get("/local/{path}/d") {
+            val path =
+                "files/" + call.parameters["path"].toString().replace(":", "/").replace(">", "/").replace("*", "/")
+            val file = File(path)
+            if (file.isDirectory) {
+                call.respond(fetchDir(file))
             }
+            call.response.header(
+                HttpHeaders.ContentDisposition,
+                ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, file.name)
+                    .toString()
+            )
+            call.respondFile(file)
         }
     }
 }
