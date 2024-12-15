@@ -1,4 +1,3 @@
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -37,4 +36,8 @@ dependencies {
     implementation(libs.exposed.jdbc)
 
     implementation(libs.postgresql.jdbc)
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.logging)
 }
