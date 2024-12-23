@@ -6,8 +6,8 @@ import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
     routing {
-        get("/") {
-            call.respondText("Привет Hope")
+        get("/connect") {
+            call.respondText("true")
         }
     }
 }
