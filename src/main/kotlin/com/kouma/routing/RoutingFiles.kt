@@ -6,6 +6,8 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import java.io.File
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 fun Application.configureRoutingFiles() {
     routing {
@@ -36,10 +38,12 @@ fun Application.configureRoutingFiles() {
                 call.respond(fetchDir(file))
             }
             call.response.header(
-                HttpHeaders.ContentDisposition,
-                ContentDisposition.Attachment.withParameter(ContentDisposition.Parameters.FileName, file.name)
-                    .toString()
+                HttpHeaders.ContentDisposition, ContentDisposition.Attachment.withParameter(
+                    ContentDisposition.Parameters.FileName,
+                    URLEncoder.encode(file.name, StandardCharsets.UTF_8.toString()).replace("+", "%20")
+                ).toString()
             )
+            println(file.name)
             call.respondFile(file)
         }
     }
