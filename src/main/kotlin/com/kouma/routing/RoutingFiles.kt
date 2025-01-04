@@ -48,7 +48,6 @@ fun Application.configureRoutingFiles() {
                     URLEncoder.encode(file.name, StandardCharsets.UTF_8.toString()).replace("+", "%20")
                 ).toString()
             )
-            println(file.name)
             call.respondFile(file)
         }
     }
