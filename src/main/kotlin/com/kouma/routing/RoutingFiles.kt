@@ -1,6 +1,7 @@
 package com.kouma.routing
 
 import com.kouma.serialization.fetchDir
+import com.kouma.serialization.fetchDisks
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -11,6 +12,10 @@ import java.nio.charset.StandardCharsets
 
 fun Application.configureRoutingFiles() {
     routing {
+        get("/disks") {
+            val disks = File.listRoots().toList()
+            call.respond(fetchDisks(disks))
+        }
         get("/{disk}/") {
             val disk = call.parameters["disk"].toString()
             val file = File("$disk:/")

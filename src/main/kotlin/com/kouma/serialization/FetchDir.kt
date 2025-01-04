@@ -20,6 +20,20 @@ fun fetchDir(dir: File): List<CatalogItem> {
     return result.sortedBy { it.name.toLowerCasePreservingASCIIRules() }.sortedBy { !it.isDir }
 }
 
+fun fetchDisks(list: List<File>): List<CatalogItem> {
+    val result = mutableListOf<CatalogItem>()
+    for (item in list) {
+        result.add(
+            CatalogItem(
+                isDir = item.isDirectory,
+                name = item.path[0].toString(),
+                extension = if (!item.isDirectory) item.extension else null
+            )
+        )
+    }
+    return result.sortedBy { it.name.toLowerCasePreservingASCIIRules() }.sortedBy { !it.isDir }
+}
+
 @Serializable
 data class CatalogItem(
     val isDir: Boolean,
